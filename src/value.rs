@@ -39,12 +39,12 @@ impl Add for Value {
             Value::Integer(left) => match rhs {
                 Value::Integer(right) => Value::Integer(left + right),
                 Value::Float(right) => Value::Float(Rational64::from(left) + right),
-            }
+            },
 
             Value::Float(left) => match rhs {
                 Value::Integer(right) => Value::Float(left + Rational64::from(right)),
                 Value::Float(right) => Value::Float(left + right),
-            }
+            },
         }
     }
 }
@@ -57,12 +57,12 @@ impl Div for Value {
             Value::Integer(left) => match rhs {
                 Value::Integer(right) => Value::Integer(left / right),
                 Value::Float(right) => Value::Float(Rational64::from(left) / right),
-            }
+            },
 
             Value::Float(left) => match rhs {
                 Value::Integer(right) => Value::Float(left / Rational64::from(right)),
                 Value::Float(right) => Value::Float(left / right),
-            }
+            },
         }
     }
 }
@@ -75,12 +75,12 @@ impl Mul for Value {
             Value::Integer(left) => match rhs {
                 Value::Integer(right) => Value::Integer(left * right),
                 Value::Float(right) => Value::Float(Rational64::from(left) * right),
-            }
+            },
 
             Value::Float(left) => match rhs {
                 Value::Integer(right) => Value::Float(left * Rational64::from(right)),
                 Value::Float(right) => Value::Float(left * right),
-            }
+            },
         }
     }
 }
@@ -93,12 +93,12 @@ impl Sub for Value {
             Value::Integer(left) => match rhs {
                 Value::Integer(right) => Value::Integer(left - right),
                 Value::Float(right) => Value::Float(Rational64::from(left) - right),
-            }
+            },
 
             Value::Float(left) => match rhs {
                 Value::Integer(right) => Value::Float(left - Rational64::from(right)),
                 Value::Float(right) => Value::Float(left - right),
-            }
+            },
         }
     }
 }

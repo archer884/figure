@@ -1,7 +1,10 @@
 mod error;
 mod value;
 
-use crate::{value::Value, error::{Error, Result}};
+use crate::{
+    error::{Error, Result},
+    value::Value,
+};
 use std::env;
 use std::str::FromStr;
 
