@@ -55,7 +55,7 @@ impl Div for Value {
     fn div(self, rhs: Self) -> Value {
         match self {
             Value::Integer(left) => match rhs {
-                Value::Integer(right) => Value::Integer(left / right),
+                Value::Integer(right) => Value::Float(Rational64::from(left) / Rational64::from(right)),
                 Value::Float(right) => Value::Float(Rational64::from(left) / right),
             },
 
