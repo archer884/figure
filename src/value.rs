@@ -24,9 +24,29 @@ impl FromStr for Value {
 
 impl Display for Value {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        struct RatioDisplay(f64);
+
+        impl RatioDisplay {
+            fn from_ratio(n: &Rational64) -> RatioDisplay {
+                RatioDisplay(*n.numer() as f64 / *n.denom() as f64)
+            }
+        }
+
+        impl Display for RatioDisplay {
+            fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+                write!(f, "{}", self.0)
+            }
+        }
+
         match self {
             Value::Integer(x) => write!(f, "{}", x),
-            Value::Float(x) => write!(f, "{}", x),
+            Value::Float(x) => {
+                if x.is_integer() {
+                    write!(f, "{}", x.to_integer())
+                } else {
+                    write!(f, "{}", RatioDisplay::from_ratio(x))
+                }
+            }
         }
     }
 }
