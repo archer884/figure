@@ -1,16 +1,20 @@
+mod error;
+mod value;
+
+use crate::{value::Value, error::{Error, Result}};
 use std::env;
 use std::str::FromStr;
 
 #[derive(Clone, Debug)]
 enum Element {
-    Value(i64),
+    Value(Value),
     Operator(Op),
 }
 
 impl FromStr for Element {
-    type Err = EvalError;
+    type Err = Error;
 
-    fn from_str(s: &str) -> Result<Element, EvalError> {
+    fn from_str(s: &str) -> Result<Element> {
         match s {
             "+" => Ok(Element::Operator(Op::Add)),
             "/" => Ok(Element::Operator(Op::Div)),
@@ -20,7 +24,7 @@ impl FromStr for Element {
             s => s
                 .parse()
                 .map(Element::Value)
-                .map_err(|_| EvalError("Expected operator or operand")),
+                .map_err(|_| Error::Eval("Expected operator or operand")),
         }
     }
 }
@@ -34,7 +38,7 @@ enum Op {
 }
 
 impl Op {
-    fn apply(&self, left: i64, right: i64) -> i64 {
+    fn apply(&self, left: Value, right: Value) -> Value {
         match self {
             Op::Add => left + right,
             Op::Div => left / right,
@@ -44,33 +48,30 @@ impl Op {
     }
 }
 
-struct OperandStack(Vec<i64>);
+struct OperandStack<T>(Vec<T>);
 
-impl OperandStack {
-    fn new() -> OperandStack {
+impl<T> OperandStack<T> {
+    fn new() -> OperandStack<T> {
         OperandStack(Vec::new())
     }
 
-    fn push(&mut self, operand: i64) {
+    fn push(&mut self, operand: T) {
         self.0.push(operand);
     }
 
-    fn pop(&mut self) -> Result<i64, EvalError> {
-        self.0.pop().ok_or(EvalError("Operand unavailable"))
+    fn pop(&mut self) -> Result<T> {
+        self.0.pop().ok_or(Error::Eval("Operand unavailable"))
     }
 }
 
-#[derive(Debug)]
-struct EvalError(&'static str);
-
-fn main() -> Result<(), EvalError> {
-    let equation: Result<Vec<Element>, _> = env::args().skip(1).map(|x| x.parse()).collect();
+fn main() -> Result<()> {
+    let equation: Result<Vec<Element>> = env::args().skip(1).map(|x| x.parse()).collect();
 
     println!("{}", equation.and_then(evaluate)?);
     Ok(())
 }
 
-fn evaluate(elements: impl IntoIterator<Item = Element>) -> Result<i64, EvalError> {
+fn evaluate(elements: impl IntoIterator<Item = Element>) -> Result<Value> {
     let mut stack = OperandStack::new();
     for element in elements {
         match element {
